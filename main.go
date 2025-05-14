@@ -153,12 +153,7 @@ func main() {
 		}
 
 		if len(properties) == 0 {
-			c.HTML(http.StatusOK, "rows.html", gin.H{
-				"Properties": properties,
-				"NextPage":   nil,
-				"Last":       nil,
-				"Filter":     filter,
-			})
+			components.Rows(properties, filter, 0).Render(ctx, c.Writer)
 			return
 		}
 		nextPage := page + 1
@@ -169,7 +164,11 @@ func main() {
 		components.Rows(properties, filter, nextPage).Render(ctx, c.Writer)
 	})
 
-	router.Run(":8080")
+	port := ":8080"
+	if internal.Version == "production" {
+		port = ":80"
+	}
+	router.Run(port)
 }
 
 func randomString(n int) string {
