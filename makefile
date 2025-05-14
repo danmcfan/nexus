@@ -25,3 +25,6 @@ live/assets:
 
 live:
 	make -j4 live/templ live/server live/tailwind live/assets
+
+build:
+	go build -tags=production .
