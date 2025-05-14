@@ -64,7 +64,7 @@ func main() {
 		clientIDs[clientID] = true
 		client, err := queries.CreateClient(ctx, database.CreateClientParams{
 			PkClientID: clientID,
-			Name:       randomString(16),
+			Name:       randomCompany(),
 		})
 		if err != nil {
 			log.Fatal(err)
@@ -76,8 +76,8 @@ func main() {
 	for i := range numUsers {
 		user, err := queries.CreateUser(ctx, database.CreateUserParams{
 			PkUserID:  uuid.New().String(),
-			FirstName: randomString(16),
-			LastName:  randomString(16),
+			FirstName: randomFirstName(),
+			LastName:  randomLastName(),
 		})
 		if err != nil {
 			log.Fatal(err)
@@ -86,7 +86,15 @@ func main() {
 	}
 
 	properties := make([]database.Property, numProperties)
+	propertyIDs := make(map[string]bool)
 	for i := range numProperties {
+		propertyID := randomString(6)
+		_, ok := propertyIDs[propertyID]
+		for ok {
+			propertyID = randomString(6)
+			_, ok = propertyIDs[propertyID]
+		}
+		propertyIDs[propertyID] = true
 		fkPointOfContactID := sql.NullString{}
 		if rand.Intn(10) == 0 {
 			fkPointOfContactID = sql.NullString{
@@ -104,9 +112,9 @@ func main() {
 		}
 
 		property, err := queries.CreateProperty(ctx, database.CreatePropertyParams{
-			PkPropertyID:       uuid.New().String(),
-			Name:               randomString(16),
-			Address:            randomString(16),
+			PkPropertyID:       propertyID,
+			Name:               randomPropertyName(),
+			Address:            randomAddress(),
 			IsDemo:             rand.Intn(2) == 0,
 			FkPointOfContactID: fkPointOfContactID,
 			FkManagerID:        fkManagerID,
@@ -169,6 +177,69 @@ func main() {
 		port = ":80"
 	}
 	router.Run(port)
+}
+
+func randomCompany() string {
+	companies := []string{
+		"Acme, Inc.",
+		"Globex Corporation",
+		"Initech",
+		"Soylent Corp",
+		"Wayne Enterprises",
+		"LexCorp",
+		"Daily Planet",
+		"Daily Bugle",
+	}
+	return companies[rand.Intn(len(companies))]
+}
+
+func randomPropertyName() string {
+	names := []string{
+		"First Avenue",
+		"Second Street",
+		"Third Drive",
+		"Fourth Boulevard",
+		"Fifth Court",
+		"Sixth Place",
+		"Seventh Lane",
+		"Eighth Avenue",
+		"Ninth Street",
+	}
+	return names[rand.Intn(len(names))]
+}
+
+func randomAddress() string {
+	addresses := []string{
+		"123 Main St",
+		"456 Oak Ave",
+		"789 Pine Rd",
+	}
+	return addresses[rand.Intn(len(addresses))]
+}
+
+func randomFirstName() string {
+	firstNames := []string{
+		"John",
+		"Jane",
+		"Jim",
+		"Jill",
+		"Jack",
+	}
+	return firstNames[rand.Intn(len(firstNames))]
+}
+
+func randomLastName() string {
+	lastNames := []string{
+		"Smith",
+		"Johnson",
+		"Williams",
+		"Jones",
+		"Brown",
+		"Davis",
+		"Miller",
+		"Wilson",
+	}
+	return lastNames[rand.Intn(len(lastNames))]
 }
 
 func randomString(n int) string {

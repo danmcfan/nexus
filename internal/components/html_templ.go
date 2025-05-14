@@ -29,12 +29,12 @@ func HTML() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<html><head><title>Nexus</title><link rel=\"icon\" href=\"/public/assets/favicon.svg\"><link rel=\"stylesheet\" href=\"/public/assets/output.css\"><script src=\"https://unpkg.com/htmx.org@2.0.4\"></script></head><body class=\"bg-black text-white flex flex-col items-center justify-center p-8 gap-8\"><input class=\"bg-zinc-700 text-center text-white rounded-md p-2 w-1/2\" type=\"search\" name=\"filter\" placeholder=\"Begin typing to search...\" hx-get=\"/properties/\" hx-trigger=\"input changed delay:100ms, keyup[key==&#39;Enter&#39;], load\" hx-target=\"#results\"><table class=\"bg-zinc-800 rounded-md text-center\"><thead><tr>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<html><head><title>Nexus</title><link rel=\"icon\" href=\"/public/assets/favicon.svg\"><link rel=\"stylesheet\" href=\"/public/assets/output.css\"><script src=\"https://unpkg.com/htmx.org@2.0.4\"></script></head><body class=\"bg-black text-white flex flex-col items-center justify-center p-8 gap-8\"><input class=\"bg-zinc-800/75 text-center text-white rounded-md p-2 w-1/2\" type=\"search\" name=\"filter\" placeholder=\"Begin typing to search...\" hx-get=\"/properties/\" hx-trigger=\"input changed delay:100ms, keyup[key==&#39;Enter&#39;], load\" hx-target=\"#results\"><table class=\"text-center\"><thead><tr>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, column := range []string{"ID", "Name", "Address", "Demo", "Point of Contact", "Manager", "Client ID"} {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<th class=\"bg-zinc-700 first:rounded-tl-md last:rounded-tr-md w-64 h-8\">")
+		for _, column := range []string{"Client Name", "Client ID", "Property ID", "Property Name", "Address", "Demo", "Point of Contact", "Manager"} {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<th class=\"bg-zinc-800 first:rounded-tl-md last:rounded-tr-md w-64 h-8\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

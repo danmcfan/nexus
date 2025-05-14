@@ -11,8 +11,10 @@ templ Rows(properties []database.ListPropertiesWithFilterRow, filter string, nex
 	for i, property := range properties {
 		if i == triggerIndex && nextPage != 0 {
 			@TriggerRow(property, filter, nextPage)
+		} else if i % 2 == 0 {
+			@Row(property, "")
 		} else {
-			@Row(property)
+			@Row(property, "bg-zinc-800/25")
 		}
 	}
 }
@@ -24,21 +26,24 @@ templ TriggerRow(property database.ListPropertiesWithFilterRow, filter string, n
 		hx-target="#results"
 		hx-swap="beforeend"
 	>
-		@RowData(property)
+		@RowData(property, "")
 	</tr>
 }
 
-templ Row(property database.ListPropertiesWithFilterRow) {
+templ Row(property database.ListPropertiesWithFilterRow, additionalStyle string) {
 	<tr>
-		@RowData(property)
+		@RowData(property, additionalStyle)
 	</tr>
 }
 
-templ RowData(property database.ListPropertiesWithFilterRow) {
-	<td class="w-64 h-8">{ property.PkPropertyID }</td>
-	<td class="w-64 h-8">{ property.Name }</td>
-	<td class="w-64 h-8">{ property.Address }</td>
-	<td class="w-64 h-8 flex justify-center items-center">
+templ RowData(property database.ListPropertiesWithFilterRow, additionalStyle string) {
+	{{ style := fmt.Sprintf("w-64 h-8 %s", additionalStyle) }}
+	<td class={ style }>{ property.ClientName.String }</td>
+	<td class={ style }>{ property.ClientID.String }</td>
+	<td class={ style }>{ property.PkPropertyID }</td>
+	<td class={ style }>{ property.Name }</td>
+	<td class={ style }>{ property.Address }</td>
+	<td class={ style }>
 		<span class="flex items-center justify-center h-4 w-4 rounded bg-zinc-600">
 			if property.IsDemo {
 				<span class="text-green-500 text-sm">✓</span>
@@ -46,14 +51,13 @@ templ RowData(property database.ListPropertiesWithFilterRow) {
 		</span>
 	</td>
 	if property.PointOfContactID.Valid {
-		<td class="w-64 h-8">{ property.PointOfContactFirstName.String } { property.PointOfContactLastName.String }</td>
+		<td class={ style }>{ property.PointOfContactFirstName.String } { property.PointOfContactLastName.String }</td>
 	} else {
-		<td class="w-64 h-8">-</td>
+		<td class={ style }>-</td>
 	}
 	if property.ManagerID.Valid {
-		<td class="w-64 h-8">{ property.ManagerFirstName.String } { property.ManagerLastName.String }</td>
+		<td class={ style }>{ property.ManagerFirstName.String } { property.ManagerLastName.String }</td>
 	} else {
-		<td class="w-64 h-8">-</td>
+		<td class={ style }>-</td>
 	}
-	<td class="w-64 h-8">{ property.FkClientID }</td>
 }

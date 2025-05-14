@@ -10,10 +10,13 @@ SELECT property.*,
   point_of_contact.last_name AS point_of_contact_last_name,
   manager.pk_user_id AS manager_id,
   manager.first_name AS manager_first_name,
-  manager.last_name AS manager_last_name
+  manager.last_name AS manager_last_name,
+  client.pk_client_id AS client_id,
+  client.name AS client_name
 FROM property
 LEFT JOIN user AS point_of_contact ON property.fk_point_of_contact_id = point_of_contact.pk_user_id
 LEFT JOIN user AS manager ON property.fk_manager_id = manager.pk_user_id
+LEFT JOIN client ON property.fk_client_id = client.pk_client_id
 ORDER BY pk_property_id
 LIMIT ? OFFSET ?;
 
@@ -24,12 +27,15 @@ SELECT property.*,
   point_of_contact.last_name AS point_of_contact_last_name,
   manager.pk_user_id AS manager_id,
   manager.first_name AS manager_first_name,
-  manager.last_name AS manager_last_name
+  manager.last_name AS manager_last_name,
+  client.pk_client_id AS client_id,
+  client.name AS client_name
 FROM property
 LEFT JOIN user AS point_of_contact ON property.fk_point_of_contact_id = point_of_contact.pk_user_id
 LEFT JOIN user AS manager ON property.fk_manager_id = manager.pk_user_id
-WHERE name LIKE ?
-  OR address LIKE ?
+LEFT JOIN client ON property.fk_client_id = client.pk_client_id
+WHERE property.name LIKE ?
+  OR property.address LIKE ?
 ORDER BY pk_property_id
 LIMIT ? OFFSET ?;
 
@@ -40,10 +46,13 @@ SELECT property.*,
   point_of_contact.last_name AS point_of_contact_last_name,
   manager.pk_user_id AS manager_id,
   manager.first_name AS manager_first_name,
-  manager.last_name AS manager_last_name
+  manager.last_name AS manager_last_name,
+  client.pk_client_id AS client_id,
+  client.name AS client_name
 FROM property
 LEFT JOIN user AS point_of_contact ON property.fk_point_of_contact_id = point_of_contact.pk_user_id
 LEFT JOIN user AS manager ON property.fk_manager_id = manager.pk_user_id
+LEFT JOIN client ON property.fk_client_id = client.pk_client_id
 WHERE pk_property_id = ?;
 
 -- name: UpdateProperty :one

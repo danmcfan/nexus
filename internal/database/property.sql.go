@@ -66,10 +66,13 @@ SELECT property.pk_property_id, property.name, property.address, property.is_dem
   point_of_contact.last_name AS point_of_contact_last_name,
   manager.pk_user_id AS manager_id,
   manager.first_name AS manager_first_name,
-  manager.last_name AS manager_last_name
+  manager.last_name AS manager_last_name,
+  client.pk_client_id AS client_id,
+  client.name AS client_name
 FROM property
 LEFT JOIN user AS point_of_contact ON property.fk_point_of_contact_id = point_of_contact.pk_user_id
 LEFT JOIN user AS manager ON property.fk_manager_id = manager.pk_user_id
+LEFT JOIN client ON property.fk_client_id = client.pk_client_id
 WHERE pk_property_id = ?
 `
 
@@ -87,6 +90,8 @@ type GetPropertyRow struct {
 	ManagerID               sql.NullString
 	ManagerFirstName        sql.NullString
 	ManagerLastName         sql.NullString
+	ClientID                sql.NullString
+	ClientName              sql.NullString
 }
 
 func (q *Queries) GetProperty(ctx context.Context, pkPropertyID string) (GetPropertyRow, error) {
@@ -106,6 +111,8 @@ func (q *Queries) GetProperty(ctx context.Context, pkPropertyID string) (GetProp
 		&i.ManagerID,
 		&i.ManagerFirstName,
 		&i.ManagerLastName,
+		&i.ClientID,
+		&i.ClientName,
 	)
 	return i, err
 }
@@ -117,10 +124,13 @@ SELECT property.pk_property_id, property.name, property.address, property.is_dem
   point_of_contact.last_name AS point_of_contact_last_name,
   manager.pk_user_id AS manager_id,
   manager.first_name AS manager_first_name,
-  manager.last_name AS manager_last_name
+  manager.last_name AS manager_last_name,
+  client.pk_client_id AS client_id,
+  client.name AS client_name
 FROM property
 LEFT JOIN user AS point_of_contact ON property.fk_point_of_contact_id = point_of_contact.pk_user_id
 LEFT JOIN user AS manager ON property.fk_manager_id = manager.pk_user_id
+LEFT JOIN client ON property.fk_client_id = client.pk_client_id
 ORDER BY pk_property_id
 LIMIT ? OFFSET ?
 `
@@ -144,6 +154,8 @@ type ListPropertiesRow struct {
 	ManagerID               sql.NullString
 	ManagerFirstName        sql.NullString
 	ManagerLastName         sql.NullString
+	ClientID                sql.NullString
+	ClientName              sql.NullString
 }
 
 func (q *Queries) ListProperties(ctx context.Context, arg ListPropertiesParams) ([]ListPropertiesRow, error) {
@@ -169,6 +181,8 @@ func (q *Queries) ListProperties(ctx context.Context, arg ListPropertiesParams) 
 			&i.ManagerID,
 			&i.ManagerFirstName,
 			&i.ManagerLastName,
+			&i.ClientID,
+			&i.ClientName,
 		); err != nil {
 			return nil, err
 		}
@@ -190,12 +204,15 @@ SELECT property.pk_property_id, property.name, property.address, property.is_dem
   point_of_contact.last_name AS point_of_contact_last_name,
   manager.pk_user_id AS manager_id,
   manager.first_name AS manager_first_name,
-  manager.last_name AS manager_last_name
+  manager.last_name AS manager_last_name,
+  client.pk_client_id AS client_id,
+  client.name AS client_name
 FROM property
 LEFT JOIN user AS point_of_contact ON property.fk_point_of_contact_id = point_of_contact.pk_user_id
 LEFT JOIN user AS manager ON property.fk_manager_id = manager.pk_user_id
-WHERE name LIKE ?
-  OR address LIKE ?
+LEFT JOIN client ON property.fk_client_id = client.pk_client_id
+WHERE property.name LIKE ?
+  OR property.address LIKE ?
 ORDER BY pk_property_id
 LIMIT ? OFFSET ?
 `
@@ -221,6 +238,8 @@ type ListPropertiesWithFilterRow struct {
 	ManagerID               sql.NullString
 	ManagerFirstName        sql.NullString
 	ManagerLastName         sql.NullString
+	ClientID                sql.NullString
+	ClientName              sql.NullString
 }
 
 func (q *Queries) ListPropertiesWithFilter(ctx context.Context, arg ListPropertiesWithFilterParams) ([]ListPropertiesWithFilterRow, error) {
@@ -251,6 +270,8 @@ func (q *Queries) ListPropertiesWithFilter(ctx context.Context, arg ListProperti
 			&i.ManagerID,
 			&i.ManagerFirstName,
 			&i.ManagerLastName,
+			&i.ClientID,
+			&i.ClientName,
 		); err != nil {
 			return nil, err
 		}

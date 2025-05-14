@@ -10,7 +10,7 @@ templ HTML() {
 		</head>
 		<body class="bg-black text-white flex flex-col items-center justify-center p-8 gap-8">
 			<input
-				class="bg-zinc-700 text-center text-white rounded-md p-2 w-1/2"
+				class="bg-zinc-800/75 text-center text-white rounded-md p-2 w-1/2"
 				type="search"
 				name="filter"
 				placeholder="Begin typing to search..."
@@ -18,11 +18,11 @@ templ HTML() {
 				hx-trigger="input changed delay:100ms, keyup[key=='Enter'], load"
 				hx-target="#results"
 			/>
-			<table class="bg-zinc-800 rounded-md text-center">
+			<table class="text-center">
 				<thead>
 					<tr>
-						for _, column := range []string{"ID", "Name", "Address", "Demo", "Point of Contact", "Manager", "Client ID"} {
-							<th class="bg-zinc-700 first:rounded-tl-md last:rounded-tr-md w-64 h-8">{ column }</th>
+						for _, column := range []string{"Client Name", "Client ID", "Property ID", "Property Name", "Address", "Demo", "Point of Contact", "Manager"} {
+							<th class="bg-zinc-800 first:rounded-tl-md last:rounded-tr-md w-64 h-8">{ column }</th>
 						}
 					</tr>
 				</thead>
