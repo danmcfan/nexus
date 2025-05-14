@@ -27,32 +27,7 @@
                     <th class="px-4 py-2">Client ID</th>
                 </tr>
             </thead>
-            <tbody id="results">
-                {{range .Properties}}
-                <tr>
-                    <td class="px-4 py-2">{{.PkPropertyID}}</td>
-                    <td class="px-4 py-2">{{.Name}}</td>
-                    <td class="px-4 py-2">{{.Address}}</td>
-                    <td class="px-4 py-2">{{if .IsDemo}}Yes{{else}}No{{end}}</td>
-                    <td class="px-4 py-2">{{if .PointOfContactID.Valid}}{{.PointOfContactFirstName.String}} {{.PointOfContactLastName.String}}{{else}}-{{end}}</td>
-                    <td class="px-4 py-2">{{if .ManagerID.Valid}}{{.ManagerFirstName.String}} {{.ManagerLastName.String}}{{else}}-{{end}}</td>
-                    <td class="px-4 py-2">{{.FkClientID}}</td>
-                </tr>
-                {{end}}
-                {{if .NextPage}}
-                <tr hx-get="/properties/page={{ .NextPage }}"
-                    hx-trigger="revealed"
-                    hx-swap="afterend">
-                    <td class="px-4 py-2">{{.Last.PkPropertyID}}</td>
-                    <td class="px-4 py-2">{{.Last.Name}}</td>
-                    <td class="px-4 py-2">{{.Last.Address}}</td>
-                    <td class="px-4 py-2">{{if .Last.IsDemo}}Yes{{else}}No{{end}}</td>
-                    <td class="px-4 py-2">{{if .Last.PointOfContactID.Valid}}{{.Last.PointOfContactFirstName.String}} {{.Last.PointOfContactLastName.String}}{{else}}-{{end}}</td>
-                    <td class="px-4 py-2">{{if .Last.ManagerID.Valid}}{{.Last.ManagerFirstName.String}} {{.Last.ManagerLastName.String}}{{else}}-{{end}}</td>
-                    <td class="px-4 py-2">{{.Last.FkClientID}}</td>
-                </tr>
-                {{end}}
-            </tbody>
+            <tbody id="results" />
         </table>
     </body>
 </html>
