@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"embed"
 	"log"
 	"math/rand"
 	"net/http"
@@ -13,8 +14,13 @@ import (
 	"github.com/google/uuid"
 	_ "modernc.org/sqlite"
 
+	"github.com/danmcfan/nexus/internal"
+	"github.com/danmcfan/nexus/internal/components"
 	"github.com/danmcfan/nexus/internal/database"
 )
+
+//go:embed assets
+var embeddedFiles embed.FS
 
 const (
 	numClients    = 100
@@ -24,7 +30,7 @@ const (
 )
 
 func main() {
-	log.Println("Nexus is running...")
+	log.Println("Nexus is running in", internal.Version, "mode...")
 
 	ctx := context.Background()
 	db, err := sql.Open("sqlite", ":memory:")
@@ -113,48 +119,33 @@ func main() {
 	}
 
 	router := gin.Default()
-	router.Static("/static", "./static")
-	router.LoadHTMLGlob("./static/*.html")
+
+	if internal.Version == "production" {
+		log.Println("Production mode")
+		router.StaticFS("/public", http.FS(embeddedFiles))
+	} else {
+		log.Println("Development mode")
+		router.Static("/public/assets", "./assets")
+	}
 
 	router.GET("/", func(c *gin.Context) {
-		properties, err := queries.ListPropertiesWithFilter(ctx, database.ListPropertiesWithFilterParams{
-			Offset: 0,
-			Limit:  pageSize,
-		})
-		if err != nil {
-			log.Println(err)
-		}
-
-		if len(properties) == 0 {
-			c.HTML(http.StatusOK, "index.html", gin.H{
-				"Properties": properties,
-				"NextPage":   nil,
-				"Last":       nil,
-			})
-			return
-		}
-
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"Properties": properties[0 : len(properties)-1],
-			"NextPage":   "1",
-			"Last":       properties[len(properties)-1],
-		})
+		components.HTML().Render(ctx, c.Writer)
 	})
 
 	router.GET("/properties/", func(c *gin.Context) {
 		filter := c.Query("filter")
-		page := c.Query("page")
-		if page == "" {
-			page = "0"
+		pageParam := c.Query("page")
+		if pageParam == "" {
+			pageParam = "0"
 		}
-		pageInt, err := strconv.Atoi(page)
+		page, err := strconv.Atoi(pageParam)
 		if err != nil {
 			log.Fatal(err)
 		}
 		properties, err := queries.ListPropertiesWithFilter(ctx, database.ListPropertiesWithFilterParams{
 			Name:    "%" + filter + "%",
 			Address: "%" + filter + "%",
-			Offset:  int64(pageInt * pageSize),
+			Offset:  int64(page * pageSize),
 			Limit:   pageSize,
 		})
 		if err != nil {
@@ -170,24 +161,12 @@ func main() {
 			})
 			return
 		}
-		nextPage := strconv.Itoa(pageInt + 1)
+		nextPage := page + 1
 		if len(properties) < pageSize {
-			nextPage = ""
-
+			nextPage = 0
 		}
 
-		if len(properties) < 10 {
-			for _, property := range properties {
-				log.Println(property)
-			}
-		}
-
-		c.HTML(http.StatusOK, "rows.html", gin.H{
-			"Properties": properties[0 : len(properties)-1],
-			"NextPage":   nextPage,
-			"Last":       properties[len(properties)-1],
-			"Filter":     filter,
-		})
+		components.Rows(properties, filter, nextPage).Render(ctx, c.Writer)
 	})
 
 	router.Run(":8080")

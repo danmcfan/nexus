@@ -1,0 +1,59 @@
+package components
+
+import (
+	"fmt"
+
+	"github.com/danmcfan/nexus/internal/database"
+)
+
+templ Rows(properties []database.ListPropertiesWithFilterRow, filter string, nextPage int) {
+	{{ triggerIndex := len(properties) - 1 }}
+	for i, property := range properties {
+		if i == triggerIndex && nextPage != 0 {
+			@TriggerRow(property, filter, nextPage)
+		} else {
+			@Row(property)
+		}
+	}
+}
+
+templ TriggerRow(property database.ListPropertiesWithFilterRow, filter string, nextPage int) {
+	<tr
+		hx-get={ fmt.Sprintf("/properties/?filter=%s&page=%d", filter, nextPage) }
+		hx-trigger="revealed"
+		hx-target="#results"
+		hx-swap="beforeend"
+	>
+		@RowData(property)
+	</tr>
+}
+
+templ Row(property database.ListPropertiesWithFilterRow) {
+	<tr>
+		@RowData(property)
+	</tr>
+}
+
+templ RowData(property database.ListPropertiesWithFilterRow) {
+	<td class="w-64 h-8">{ property.PkPropertyID }</td>
+	<td class="w-64 h-8">{ property.Name }</td>
+	<td class="w-64 h-8">{ property.Address }</td>
+	<td class="w-64 h-8 flex justify-center items-center">
+		<span class="flex items-center justify-center h-4 w-4 rounded bg-zinc-600">
+			if property.IsDemo {
+				<span class="text-green-500 text-sm">✓</span>
+			}
+		</span>
+	</td>
+	if property.PointOfContactID.Valid {
+		<td class="w-64 h-8">{ property.PointOfContactFirstName.String } { property.PointOfContactLastName.String }</td>
+	} else {
+		<td class="w-64 h-8">-</td>
+	}
+	if property.ManagerID.Valid {
+		<td class="w-64 h-8">{ property.ManagerFirstName.String } { property.ManagerLastName.String }</td>
+	} else {
+		<td class="w-64 h-8">-</td>
+	}
+	<td class="w-64 h-8">{ property.FkClientID }</td>
+}
