@@ -10,7 +10,7 @@ live/server:
 		--misc.clean_on_exit=true
 
 live/tailwind:
-	./tailwindcss --input="./assets/input.css" \
+	./bin/tailwindcss --input="./assets/input.css" \
 		--output="./assets/output.css" \
 		--minify \
 		--watch
@@ -27,4 +27,4 @@ live:
 	make -j4 live/templ live/server live/tailwind live/assets
 
 build:
-	go build -tags=production .
+	go build -tags=production -o bin/nexus .
