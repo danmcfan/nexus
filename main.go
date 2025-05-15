@@ -7,7 +7,6 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +18,7 @@ import (
 	"github.com/danmcfan/nexus/internal/database"
 )
 
-//go:embed assets
+//go:embed assets schema
 var embeddedFiles embed.FS
 
 const (
@@ -42,7 +41,7 @@ func main() {
 	queries := database.New(db)
 
 	for _, file := range []string{"schema/client.sql", "schema/metadata.sql", "schema/property.sql", "schema/user.sql"} {
-		schema, err := os.ReadFile(file)
+		schema, err := embeddedFiles.ReadFile(file)
 		if err != nil {
 			log.Fatal(err)
 		}

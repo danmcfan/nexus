@@ -1,0 +1,8 @@
+bin/
+tmp/
+
+.gitignore
+makefile
+README.md
+sqlc.yml
+tailwind.config.js
