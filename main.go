@@ -7,7 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"strconv"
+	"sort"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -141,34 +141,30 @@ func main() {
 
 	router.GET("/properties/", func(c *gin.Context) {
 		filter := c.Query("filter")
-		pageParam := c.Query("page")
-		if pageParam == "" {
-			pageParam = "0"
-		}
-		page, err := strconv.Atoi(pageParam)
 		if err != nil {
 			log.Fatal(err)
 		}
 		properties, err := queries.ListPropertiesWithFilter(ctx, database.ListPropertiesWithFilterParams{
-			Name:    "%" + filter + "%",
-			Address: "%" + filter + "%",
-			Offset:  int64(page * pageSize),
-			Limit:   pageSize,
+			PkPropertyID: "%" + filter + "%",
+			Name:         "%" + filter + "%",
+			Address:      "%" + filter + "%",
 		})
 		if err != nil {
 			log.Println(err)
 		}
 
-		if len(properties) == 0 {
-			components.Rows(properties, filter, 0).Render(ctx, c.Writer)
-			return
-		}
-		nextPage := page + 1
-		if len(properties) < pageSize {
-			nextPage = 0
+		propertiesByClient := make(map[string][]database.ListPropertiesWithFilterRow)
+		for _, property := range properties {
+			propertiesByClient[property.ClientName.String] = append(propertiesByClient[property.ClientName.String], property)
 		}
 
-		components.Rows(properties, filter, nextPage).Render(ctx, c.Writer)
+		clients := make([]string, 0)
+		for k, _ := range propertiesByClient {
+			clients = append(clients, k)
+		}
+		sort.Strings(clients)
+
+		components.GroupedRows(clients, propertiesByClient).Render(ctx, c.Writer)
 	})
 
 	port := ":8080"

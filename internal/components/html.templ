@@ -6,11 +6,14 @@ templ HTML() {
 			<title>Nexus</title>
 			<link rel="icon" href="/public/assets/favicon.svg"/>
 			<link rel="stylesheet" href="/public/assets/output.css"/>
-			<script src="https://unpkg.com/htmx.org@2.0.4"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+			<script defer src="https://unpkg.com/htmx.org@2.0.4"></script>
 		</head>
 		<body class="bg-black text-white flex flex-col items-center justify-center p-8 gap-8">
 			<input
-				class="bg-zinc-800/75 text-center text-white rounded-md p-2 w-1/2"
+				class="bg-zinc-800/75 rounded-md p-2 w-1/2 text-center"
 				type="search"
 				name="filter"
 				placeholder="Begin typing to search..."
@@ -18,16 +21,15 @@ templ HTML() {
 				hx-trigger="input changed delay:100ms, keyup[key=='Enter'], load"
 				hx-target="#results"
 			/>
-			<table class="text-center">
-				<thead>
-					<tr>
-						for _, column := range []string{"Client Name", "Client ID", "Property ID", "Property Name", "Address", "Demo", "Point of Contact", "Manager"} {
-							<th class="bg-zinc-800 first:rounded-tl-md last:rounded-tr-md w-64 h-8">{ column }</th>
-						}
-					</tr>
-				</thead>
-				<tbody id="results"></tbody>
-			</table>
+			<div>
+				<div class="h-8 w-full bg-zinc-800/75 flex justify-center items-center rounded-t-lg gap-4">
+					<p class="w-48 text-center">Client Name</p>
+					for _, column := range []string{"Client ID", "Property ID", "Property Name", "Address", "Demo", "Point of Contact", "Manager"} {
+						<p class="w-40 text-center">{ column }</p>
+					}
+				</div>
+				<div id="results"></div>
+			</div>
 		</body>
 	</html>
 }

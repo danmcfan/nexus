@@ -131,14 +131,8 @@ FROM property
 LEFT JOIN user AS point_of_contact ON property.fk_point_of_contact_id = point_of_contact.pk_user_id
 LEFT JOIN user AS manager ON property.fk_manager_id = manager.pk_user_id
 LEFT JOIN client ON property.fk_client_id = client.pk_client_id
-ORDER BY pk_property_id
-LIMIT ? OFFSET ?
+ORDER BY client_name, property.pk_property_id
 `
-
-type ListPropertiesParams struct {
-	Limit  int64
-	Offset int64
-}
 
 type ListPropertiesRow struct {
 	PkPropertyID            string
@@ -158,8 +152,8 @@ type ListPropertiesRow struct {
 	ClientName              sql.NullString
 }
 
-func (q *Queries) ListProperties(ctx context.Context, arg ListPropertiesParams) ([]ListPropertiesRow, error) {
-	rows, err := q.db.QueryContext(ctx, listProperties, arg.Limit, arg.Offset)
+func (q *Queries) ListProperties(ctx context.Context) ([]ListPropertiesRow, error) {
+	rows, err := q.db.QueryContext(ctx, listProperties)
 	if err != nil {
 		return nil, err
 	}
@@ -211,17 +205,17 @@ FROM property
 LEFT JOIN user AS point_of_contact ON property.fk_point_of_contact_id = point_of_contact.pk_user_id
 LEFT JOIN user AS manager ON property.fk_manager_id = manager.pk_user_id
 LEFT JOIN client ON property.fk_client_id = client.pk_client_id
-WHERE property.name LIKE ?
+WHERE 
+  property.pk_property_id = ?
+  OR property.name LIKE ?
   OR property.address LIKE ?
-ORDER BY pk_property_id
-LIMIT ? OFFSET ?
+ORDER BY client_name, property.pk_property_id
 `
 
 type ListPropertiesWithFilterParams struct {
-	Name    string
-	Address string
-	Limit   int64
-	Offset  int64
+	PkPropertyID string
+	Name         string
+	Address      string
 }
 
 type ListPropertiesWithFilterRow struct {
@@ -243,12 +237,7 @@ type ListPropertiesWithFilterRow struct {
 }
 
 func (q *Queries) ListPropertiesWithFilter(ctx context.Context, arg ListPropertiesWithFilterParams) ([]ListPropertiesWithFilterRow, error) {
-	rows, err := q.db.QueryContext(ctx, listPropertiesWithFilter,
-		arg.Name,
-		arg.Address,
-		arg.Limit,
-		arg.Offset,
-	)
+	rows, err := q.db.QueryContext(ctx, listPropertiesWithFilter, arg.PkPropertyID, arg.Name, arg.Address)
 	if err != nil {
 		return nil, err
 	}

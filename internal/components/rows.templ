@@ -6,58 +6,65 @@ import (
 	"github.com/danmcfan/nexus/internal/database"
 )
 
-templ Rows(properties []database.ListPropertiesWithFilterRow, filter string, nextPage int) {
-	{{ triggerIndex := len(properties) - 1 }}
+templ GroupedRows(clients []string, properties map[string][]database.ListPropertiesWithFilterRow) {
+	for _, client := range clients {
+		@GroupedRow(client, properties[client])
+	}
+}
+
+templ GroupedRow(clientName string, properties []database.ListPropertiesWithFilterRow) {
+	{{ xData := fmt.Sprintf("{open: $persist(false).as('%s')}", clientName) }}
+	<div x-data={ xData }>
+		<div @click="open = !open" class="h-8 flex flex-row items-center justify-between bg-zinc-900/50 hover:bg-zinc-900 cursor-pointer">
+			<img src="/public/assets/chevron-down.svg" class="w-6 h-6 transition-all duration-500" x-bind:class="!open ? '-rotate-90' : 'rotate-0'"/>
+			<p class="w-48">{ clientName }</p>
+			for range 7 {
+				<p class="w-40"></p>
+			}
+		</div>
+		<div x-show="open" x-collapse.duration.500ms>
+			@Rows(properties)
+		</div>
+	</div>
+}
+
+templ Rows(properties []database.ListPropertiesWithFilterRow) {
 	for i, property := range properties {
-		if i == triggerIndex && nextPage != 0 {
-			@TriggerRow(property, filter, nextPage)
-		} else if i % 2 == 0 {
-			@Row(property, "")
+		if i % 2 == 0 {
+			@Row(property, "bg-zinc-800")
 		} else {
-			@Row(property, "bg-zinc-800/25")
+			@Row(property, "bg-zinc-800/50")
 		}
 	}
 }
 
-templ TriggerRow(property database.ListPropertiesWithFilterRow, filter string, nextPage int) {
-	<tr
-		hx-get={ fmt.Sprintf("/properties/?filter=%s&page=%d", filter, nextPage) }
-		hx-trigger="revealed"
-		hx-target="#results"
-		hx-swap="beforeend"
-	>
-		@RowData(property, "")
-	</tr>
-}
-
 templ Row(property database.ListPropertiesWithFilterRow, additionalStyle string) {
-	<tr>
-		@RowData(property, additionalStyle)
-	</tr>
+	<div class={ fmt.Sprintf("text-center flex flex-row items-center justify-between h-8 %s", additionalStyle) }>
+		@RowData(property)
+	</div>
 }
 
-templ RowData(property database.ListPropertiesWithFilterRow, additionalStyle string) {
-	{{ style := fmt.Sprintf("w-64 h-8 %s", additionalStyle) }}
-	<td class={ style }>{ property.ClientName.String }</td>
-	<td class={ style }>{ property.ClientID.String }</td>
-	<td class={ style }>{ property.PkPropertyID }</td>
-	<td class={ style }>{ property.Name }</td>
-	<td class={ style }>{ property.Address }</td>
-	<td class={ style }>
+templ RowData(property database.ListPropertiesWithFilterRow) {
+	<p class="w-48"></p>
+	<p class="w-40">{ property.ClientID.String }</p>
+	<p class="w-40">{ property.PkPropertyID }</p>
+	<p class="w-40">{ property.Name }</p>
+	<p class="w-40">{ property.Address }</p>
+	<div class="w-40 flex items-center justify-center">
 		<span class="flex items-center justify-center h-4 w-4 rounded bg-zinc-600">
 			if property.IsDemo {
 				<span class="text-green-500 text-sm">✓</span>
 			}
 		</span>
-	</td>
+	</div>
 	if property.PointOfContactID.Valid {
-		<td class={ style }>{ property.PointOfContactFirstName.String } { property.PointOfContactLastName.String }</td>
+		<p class="w-40">{ property.PointOfContactFirstName.String } { property.PointOfContactLastName.String }</p>
 	} else {
-		<td class={ style }>-</td>
+		<p class="w-40">-</p>
 	}
 	if property.ManagerID.Valid {
-		<td class={ style }>{ property.ManagerFirstName.String } { property.ManagerLastName.String }</td>
+		<p class="w-40">{ property.ManagerFirstName.String } { property.ManagerLastName.String }</p>
 	} else {
-		<td class={ style }>-</td>
+		<p class="w-40">-</p>
 	}
 }

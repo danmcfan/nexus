@@ -17,8 +17,7 @@ FROM property
 LEFT JOIN user AS point_of_contact ON property.fk_point_of_contact_id = point_of_contact.pk_user_id
 LEFT JOIN user AS manager ON property.fk_manager_id = manager.pk_user_id
 LEFT JOIN client ON property.fk_client_id = client.pk_client_id
-ORDER BY pk_property_id
-LIMIT ? OFFSET ?;
+ORDER BY client_name, property.pk_property_id;
 
 -- name: ListPropertiesWithFilter :many
 SELECT property.*,
@@ -34,10 +33,11 @@ FROM property
 LEFT JOIN user AS point_of_contact ON property.fk_point_of_contact_id = point_of_contact.pk_user_id
 LEFT JOIN user AS manager ON property.fk_manager_id = manager.pk_user_id
 LEFT JOIN client ON property.fk_client_id = client.pk_client_id
-WHERE property.name LIKE ?
+WHERE 
+  property.pk_property_id = ?
+  OR property.name LIKE ?
   OR property.address LIKE ?
-ORDER BY pk_property_id
-LIMIT ? OFFSET ?;
+ORDER BY client_name, property.pk_property_id;
 
 -- name: GetProperty :one
 SELECT property.*,

@@ -29,30 +29,30 @@ func HTML() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<html><head><title>Nexus</title><link rel=\"icon\" href=\"/public/assets/favicon.svg\"><link rel=\"stylesheet\" href=\"/public/assets/output.css\"><script src=\"https://unpkg.com/htmx.org@2.0.4\"></script></head><body class=\"bg-black text-white flex flex-col items-center justify-center p-8 gap-8\"><input class=\"bg-zinc-800/75 text-center text-white rounded-md p-2 w-1/2\" type=\"search\" name=\"filter\" placeholder=\"Begin typing to search...\" hx-get=\"/properties/\" hx-trigger=\"input changed delay:100ms, keyup[key==&#39;Enter&#39;], load\" hx-target=\"#results\"><table class=\"text-center\"><thead><tr>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<html><head><title>Nexus</title><link rel=\"icon\" href=\"/public/assets/favicon.svg\"><link rel=\"stylesheet\" href=\"/public/assets/output.css\"><script defer src=\"https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script><script defer src=\"https://unpkg.com/htmx.org@2.0.4\"></script></head><body class=\"bg-black text-white flex flex-col items-center justify-center p-8 gap-8\"><input class=\"bg-zinc-800/75 rounded-md p-2 w-1/2 text-center\" type=\"search\" name=\"filter\" placeholder=\"Begin typing to search...\" hx-get=\"/properties/\" hx-trigger=\"input changed delay:100ms, keyup[key==&#39;Enter&#39;], load\" hx-target=\"#results\"><div><div class=\"h-8 w-full bg-zinc-800/75 flex justify-center items-center rounded-t-lg gap-4\"><p class=\"w-48 text-center\">Client Name</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, column := range []string{"Client Name", "Client ID", "Property ID", "Property Name", "Address", "Demo", "Point of Contact", "Manager"} {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<th class=\"bg-zinc-800 first:rounded-tl-md last:rounded-tr-md w-64 h-8\">")
+		for _, column := range []string{"Client ID", "Property ID", "Property Name", "Address", "Demo", "Point of Contact", "Manager"} {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"w-40 text-center\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(column)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/html.templ`, Line: 25, Col: 87}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/html.templ`, Line: 28, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</th>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</tr></thead> <tbody id=\"results\"></tbody></table></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div id=\"results\"></div></div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
